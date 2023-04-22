@@ -15,17 +15,19 @@ enum driver {
   B
 };
 
-Stepper stepper(STEPS, 4,5,6,7);
+//main and adjustment stepper
+Stepper mnStepper(STEPS, 4,5,6,7);
+Stepper adjStepper(STEPS, 8,9,10,11);
 const int buttonPin = 2;
-const int slpA = 8;
-const int slpB = 9;
+const int slpA = 12;
+const int slpB = 13;
 bool toggle = 0;
 int buttonState = 0;
 
 void setup(){
   Serial.begin(9600);
   Serial.println("Testing Stepper Motor");
-  stepper.setSpeed(30);
+  mnStepper.setSpeed(30);
   pinMode(buttonPin, INPUT);
   pinMode(slpA, OUTPUT);
   pinMode(slpB, OUTPUT);
@@ -33,29 +35,56 @@ void setup(){
   swapMotor(A);
 }
 
-void multiStep(int numSteps) {
+/*
+motors can't run at the same time so operate them in tiny increments one after the other
+*/
+void multiStep(int increment) {
   for(int i = 0; i < STEPS/3; i++) {
-    stepper.step(numSteps);
+    mnStepper.step(increment);
+    adjStepper.step(increment);
   }
 }
 
+/*
+switch which motor is enabled
+*/
 void swapMotor(driver d) {
-  if(d == A) {
-    digitalWrite(slpA, HIGH);
-    digitalWrite(slpB, LOW);
-  } else if (d == B) {
-    digitalWrite(slpA, LOW);
-    digitalWrite(slpB, HIGH);
+  switch(d) {
+    case A:
+      digitalWrite(slpA, HIGH);
+      digitalWrite(slpB, LOW);
+      break;
+    case B:
+      digitalWrite(slpA, LOW);
+      digitalWrite(slpB, HIGH);
+      break;
   }
 }
 
+//step the main motor
+void stepMain(int steps) {
+  mnStepper.step(steps);
+}
+
+//step the adjustment motor
+void stepAdj(int steps){
+  adjStepper.step(steps);
+}
+
+void stepBoth(int steps) {
+  stepMain(steps);
+  stepAdj(steps);
+}
+
+//step both motors for the total steps. Don't use this!!!
 void blockStep() {
-    stepper.step(STEPS/3);                                  
-    stepper.step(-STEPS/3);
+  stepBoth(STEPS/3);
+  stepBoth(-STEPS/3);
 }
 
 void loop(){
   if(digitalRead(buttonPin) == HIGH) {
+    Serial.println("Button Pressed");
     multiStep(1);
     multiStep(-1);
     if(toggle) {
