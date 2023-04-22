@@ -40,8 +40,7 @@ motors can't run at the same time so operate them in tiny increments one after t
 */
 void multiStep(int increment) {
   for(int i = 0; i < STEPS/3; i++) {
-    mnStepper.step(increment);
-    adjStepper.step(increment);
+    stepBoth(increment);
   }
 }
 
@@ -73,7 +72,8 @@ void stepAdj(int steps){
 
 void stepBoth(int steps) {
   stepMain(steps);
-  stepAdj(steps);
+  //adjuster needs inverted direction because it is flipped
+  stepAdj(-steps);
 }
 
 //step both motors for the total steps. Don't use this!!!

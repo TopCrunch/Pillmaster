@@ -38,6 +38,7 @@ void blockStep() {
 
 void loop(){
   if(digitalRead(buttonPin) == HIGH) {
+    Serial.println("Button Pressed");
     multiStep(1);
     multiStep(-1);
   }
