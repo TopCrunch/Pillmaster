@@ -1,11 +1,12 @@
 import serial
 import tkinter as tk
 import tkinter.messagebox
+import tkinter.scrolledtext
 from time import sleep
 ser = serial.Serial("/dev/ttyACM0", 9600)
-
 window = tk.Tk()
 tk.messagebox.showinfo("Initializing...", ser.read(90))
+text_area = tk.scrolledtext.ScrolledText(window)
 def operatea():
         ser.write(bytes("a", 'utf-8'))
         tk.messagebox.showinfo("Container A", ser.readline())
