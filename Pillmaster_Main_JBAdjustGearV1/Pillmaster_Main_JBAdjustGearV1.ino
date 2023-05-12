@@ -13,18 +13,10 @@ Designed for 28BYJ-48 Stepper Motor
   will need to have slight adjustments between multiple runs
 */
 #define STEPS 514
-#define THIRD_STEPS 171
+#define THIRD_STEPS 171  
 #define SIXTH_STEPS 84  
 #define adjustGear_FullyClose 71 // found out using the CAD software that the adjustment gear rotates 50 degrees to open/close the gear opening, so this is set to 71 steps to fully close the gear opening
 #define adjustGear_HalfClose 36  // this is set to 36 which is about half of the third steps
-
-#define ADJUSTER_A_OFFSET 0
-#define ADJUSTER_B_OFFSET 0
-#define ADJUSTER_C_OFFSET 0
-
-int adjA_dir = 1;
-int adjB_dir = 1;
-int adjC_dir = 1;
 
 //main and adjustment stepper
 Stepper mnStepper(STEPS, 8,9,10,11);
@@ -39,7 +31,8 @@ HX711_ADC LoadCell(weightDT, weightSCK);
 const int calibrationAddr = 0;
 unsigned long time = 0;
 
-void setup(){
+void setup()
+{
   Serial.begin(9600);
   Serial.println("Pillmaster Arduino setting up");
   mnStepper.setSpeed(30);
@@ -52,7 +45,8 @@ void setup(){
   weightSetup();
 }
 
-void weightSetup() {
+void weightSetup()
+{
   Serial.println("Weight Sensor setting up...");
   LoadCell.begin();
   float calibrationValue;
@@ -83,7 +77,7 @@ void multiStep(int increment, int max) {
 /*
 switch which motor is enabled
 */
-void swapMotor(char val) {
+void swapMotor(char val){
   switch(val) {
     case 'a':
       digitalWrite(slpA, HIGH);
@@ -127,17 +121,25 @@ void operateCanister() {
   multiStep(-1, THIRD_STEPS);
 }
 
-void operateAdjusterSixth(int direction, int offset)
-{  
-  for(int i = 0; i < adjustGear_HalfClose + offset; i++) {
-    stepAdj(direction);
+void operateAdjusterSixth()
+{
+  
+  for(int i = 0; i < adjustGear_HalfClose; i++) {
+    stepAdj(1);
+  }
+  for(int i = 0; i < adjustGear_HalfClose; i++) {
+    stepAdj(-1);
   }
 }
 
-void operateAdjusterThird(int direction, int offset)
-{  
-  for(int i = 0; i < adjustGear_FullyClose + offset; i++) {
-    stepAdj(direction);
+void operateAdjusterThird()
+{
+  
+  for(int i = 0; i < adjustGear_FullyClose; i++) {
+    stepAdj(1);
+  }
+  for(int i = 0; i < adjustGear_FullyClose; i++) {
+    stepAdj(-1);
   }
 }
 
@@ -151,12 +153,17 @@ void loop(){
         Serial.println("Operating canister A...");
         operateCanister();
         break;
-      case 'A':
+      case 'S':   // changed this from 'A' to 'S' which adjusts motor A with Sixth-Steps
         swapMotor('a');
         delay(500);
-        Serial.println("Operating Adjuster A...");
-        operateAdjusterSixth(adjA_dir, ADJUSTER_A_OFFSET);
-        adjA_dir = adjA_dir * -1;
+        Serial.println("Operating Adjuster A to be half-closed...");
+        operateAdjusterSixth();
+        break;
+      case 'T':   //  adjusts motor A with Third Steps
+        swapMotor('a');
+        delay(500);
+        Serial.println("Operating Adjuster A to be fully closed...");
+        operateAdjusterThird();
         break;
       case 'b':
         swapMotor('b');
@@ -164,25 +171,11 @@ void loop(){
         Serial.println("Operating canister B...");
         operateCanister();
         break;
-      case 'B':
-        swapMotor('b');
-        delay(500);
-        Serial.println("Operating Adjuster B...");
-        operateAdjusterSixth(adjB_dir, ADJUSTER_B_OFFSET);
-        adjB_dir = adjB_dir * -1;
-        break;
       case 'c':
         swapMotor('c');
         delay(500);
         Serial.println("Operating canister C...");
         operateCanister();
-        break;
-      case 'C':
-        swapMotor('c');
-        delay(500);
-        Serial.println("Operating Adjuster C...");
-        operateAdjusterSixth(adjC_dir, ADJUSTER_C_OFFSET);
-        adjC_dir = adjC_dir * -1;
         break;
       case 'w':
         weightLoop();

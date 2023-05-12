@@ -23,6 +23,9 @@ window = tk.Tk()
 window.geometry("800x480")
 
 buttonFrame = tk.Frame(window)
+topButtonFrame = tk.Frame(buttonFrame)
+bottomButtonFrame = tk.Frame(buttonFrame)
+weightFrame = tk.Frame(buttonFrame)
 diagFrame = tk.Frame(window)
 text_area = tk.scrolledtext.ScrolledText(diagFrame)
 text_area.config(height = 10, width = 30)
@@ -30,26 +33,41 @@ text_area.config(height = 10, width = 30)
 bigFont = font.Font(family = GLOBAL_FONT, size = 30, weight = 'bold')
 subBigFont = font.Font(family = GLOBAL_FONT, size = 24, weight = 'bold')
 
-def operatea():
+def operateA():
     ser.write(bytes("a", 'utf-8'))
 
-def operateb():
+def operateB():
     ser.write(bytes("b", 'utf-8'))
 
-def operatec():
+def operateC():
     ser.write(bytes("c", 'utf-8'))
+    
+def operateAdjA():
+    ser.write(bytes("A", 'utf-8'))
 
-def operatew():
+def operateAdjB():
+    ser.write(bytes("B", 'utf-8'))
+
+def operateAdjC():
+    ser.write(bytes("C", 'utf-8'))
+    
+def operateW():
     ser.write(bytes("w", 'utf-8'))
-    buttona['state'] = 'disabled'
-    buttonb['state'] = 'disabled'
-    buttonc['state'] = 'disabled'
+    buttonA['state'] = 'disabled'
+    buttonB['state'] = 'disabled'
+    buttonC['state'] = 'disabled'
+    buttonA_Half['state'] = 'disabled'
+    buttonB_Half['state'] = 'disabled'
+    buttonC_Half['state'] = 'disabled'
 
-def operatex():
+def operateX():
     ser.write(bytes("x", 'utf-8'))
-    buttona['state'] = 'normal'
-    buttonb['state'] = 'normal'
-    buttonc['state'] = 'normal'
+    buttonA['state'] = 'normal'
+    buttonB['state'] = 'normal'
+    buttonC['state'] = 'normal'
+    buttonA_Half['state'] = 'normal'
+    buttonB_Half['state'] = 'normal'
+    buttonC_Half['state'] = 'normal'
 
 def openCalendar():
     calWindow = tk.Toplevel(window)
@@ -82,19 +100,28 @@ def updateText():
     text_area.configure(state='disabled')
     window.after(100, updateText)
 
-buttonA = tk.Button(buttonFrame, text = 'A', command = operatea)
+buttonA = tk.Button(topButtonFrame, text = 'A', command = operateA)
 buttonA['font'] = bigFont
 
-buttonB = tk.Button(buttonFrame, text = 'B', command = operateb)
+buttonB = tk.Button(topButtonFrame, text = 'B', command = operateB)
 buttonB['font'] = bigFont
 
-buttonC = tk.Button(buttonFrame, text = 'C', command = operatec)
+buttonC = tk.Button(topButtonFrame, text = 'C', command = operateC)
 buttonC['font'] = bigFont
 
-buttonW = tk.Button(buttonFrame, text = 'Enable\nWeight', command = operatew)
+buttonA_Half = tk.Button(bottomButtonFrame, text = '1/2', command = operateAdjA)
+buttonA_Half['font'] = bigFont
+
+buttonB_Half = tk.Button(bottomButtonFrame, text = '1/2', command = operateAdjB)
+buttonB_Half['font'] = bigFont
+
+buttonC_Half = tk.Button(bottomButtonFrame, text = '1/2', command = operateAdjC)
+buttonC_Half['font'] = bigFont
+
+buttonW = tk.Button(weightFrame, text = 'Enable\nWeight', command = operateW)
 buttonW['font'] = subBigFont
 
-buttonX = tk.Button(buttonFrame, text = 'Disable\nWeight', command = operatex)
+buttonX = tk.Button(weightFrame, text = 'Disable\nWeight', command = operateX)
 buttonX['font'] = subBigFont
 
 calButton = tk.Button(diagFrame, text = 'Open\nCalendar', command = openCalendar)
@@ -106,11 +133,17 @@ pillButton['font'] = subBigFont
 text_area.pack(side=BOTTOM, expand = True, fill = 'both')
 
 diagFrame.pack(side=RIGHT, expand = True, fill = 'both')
-buttonFrame.pack(side=LEFT, expand = True, fill = 'both')
+buttonFrame.pack(side=LEFT, expand = TRUE, fill = 'both')
+topButtonFrame.pack(side=TOP, expand = True, fill = 'both')
+bottomButtonFrame.pack(side=TOP, expand = True, fill = 'both')
+weightFrame.pack(side=BOTTOM, expand = True, fill = 'both')
 
 buttonA.pack(side=LEFT, expand = True, fill = 'both')
 buttonB.pack(side=LEFT, expand = True, fill = 'both')
 buttonC.pack(side=LEFT, expand = True, fill = 'both')
+buttonA_Half.pack(side=LEFT, expand = True, fill = 'both')
+buttonB_Half.pack(side=LEFT, expand = True, fill = 'both')
+buttonC_Half.pack(side=LEFT, expand = True, fill = 'both')
 buttonW.pack(side=LEFT, expand = True, fill = 'both')
 buttonX.pack(side=LEFT, expand = True, fill = 'both')
 
